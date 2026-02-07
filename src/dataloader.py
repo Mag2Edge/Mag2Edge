@@ -7,18 +7,7 @@ import numpy as np
 import pandas as pd
 
 def load_data(dataset_name, dataset_dir="dataset"):
-    """
-    统一的数据加载入口。
-    
-    Args:
-        dataset_name: 数据集名称 (reddit, wikiconflict, amazon, mooc, epinions)
-        dataset_dir: 数据集根目录
-        
-    Returns:
-        edge_list: (num_edges, 2) int32 数组，包含源节点和目标节点索引
-        labels: (num_edges, ) int32 数组，包含边标签
-        num_nodes: 节点总数
-    """
+
     dataset_name = dataset_name.lower()
     
     if dataset_name == 'reddit':
@@ -48,12 +37,12 @@ def load_reddit_data(dataset_dir):
         'test_lbl': os.path.join(dataset_dir, "test_embeds_labels.pkl")
     }
 
-    # 检查文件
+
     for k, v in files.items():
         if not os.path.exists(v):
             raise FileNotFoundError(f"Missing file: {v}")
 
-    # 读取边和标签
+
     train_df = pd.read_csv(files['train_edge'])
     val_df = pd.read_csv(files['val_edge'])
     test_df = pd.read_csv(files['test_edge'])
@@ -62,18 +51,18 @@ def load_reddit_data(dataset_dir):
     with open(files['val_lbl'], "rb") as f: _, vl = pickle.load(f)
     with open(files['test_lbl'], "rb") as f: _, tel = pickle.load(f)
 
-    # 标签预处理 (确保是 -1/1)
+
     tl = np.where(tl > 0, 1, -1).flatten()
     vl = np.where(vl > 0, 1, -1).flatten()
     tel = np.where(tel > 0, 1, -1).flatten()
 
-    # 合并所有数据 (按照原始脚本逻辑，先合并再在 main 中重新 split)
+
     raw_edges = []
     raw_edges.extend(list(zip(train_df['SENDER_id'].values, train_df['RECEIVER_id'].values, tl)))
     raw_edges.extend(list(zip(val_df['SENDER_id'].values, val_df['RECEIVER_id'].values, vl)))
     raw_edges.extend(list(zip(test_df['SENDER_id'].values, test_df['RECEIVER_id'].values, tel)))
 
-    # 节点映射
+    
     unique_nodes = sorted(set([e[0] for e in raw_edges] + [e[1] for e in raw_edges]))
     node_to_idx = {node: idx for idx, node in enumerate(unique_nodes)}
 
@@ -140,7 +129,7 @@ def load_amazon_data(dataset_dir):
             line = line.strip()
             if not line:
                 if 'u' in current_review and 'p' in current_review and 's' in current_review:
-                    # 映射为 0-4
+              
                     score = int(max(1, min(5, current_review['s']))) - 1
                     edges.append((current_review['u'], current_review['p'], score))
                 current_review = {}
