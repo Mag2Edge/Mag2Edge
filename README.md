@@ -1,7 +1,7 @@
 # Mag2Edge
 Official implementation of Mag2Edge for directed edge embedding.
 
-This repository contains the implementation of the algorithm **Mag2Edge**.
+This repository contains the implementation of the **Mag2Edge** algorithm.
 
 ## Requirements
 
